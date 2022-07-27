@@ -1,6 +1,7 @@
 import { FormEvent, useRef, useState } from "react";
 import QRCode from "qrcode.react";
 
+//import QrLogoImg2 from '../assets/altogiro-preta.svg'
 
 export default function QrCode() {
   const qrRef = useRef<any | undefined>();
@@ -8,7 +9,7 @@ export default function QrCode() {
   const [url, setUrl] = useState("");
   const [color, setColor ] = useState("#141926")
 
-  /*const downloadQRCodePng = (evt: FormEvent) => {
+  /*const downloadQRCode = (evt: FormEvent) => {
     evt.preventDefault(); 
     let canvas = qrRef.current.querySelector("canvas");
     let image = canvas.toDataURL("image/png");
@@ -42,18 +43,18 @@ export default function QrCode() {
   const qrCode = (
     <QRCode 
       id="qrCodeId"
-      size={300}
+      size={320}
       renderAs= "svg"
       value={url}
       bgColor="white"
       fgColor={color}
       level="Q"
-     // imageSettings={{
-     //   src: QrLogoImg2,
-     //   excavate: true,
-     //   width: 100 * 0.3,
-     //   height: 300 * 0.1,
-     // }}
+    /* imageSettings={{
+        src: QrLogoImg2,
+        excavate: true,
+        width: 120 * 0.2,
+       height: 300 * 0.1,
+      }} */
     />
   )
 
@@ -76,7 +77,7 @@ export default function QrCode() {
           placeholder="input rgb, hex or color"
         />
 
-        <button type="submit">Baixar QR Code SVG</button>
+        <button type="submit">Baixar QR Code</button>
 
       </form>
 
