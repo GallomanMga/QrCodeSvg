@@ -81,8 +81,7 @@ export default function QrCode() {
 
       </form>
 
-      
-   
+        
       <div className="qr-container__qr-code" ref={qrRef}>
           {qrCode}
       </div>
