@@ -1,60 +1,65 @@
 import { FormEvent, useRef, useState } from "react";
 import QRCode from "qrcode.react";
+import { toPng } from 'html-to-image';
 
-//import QrLogoImg2 from '../assets/altogiro-preta.svg'
 
 export default function QrCode() {
   const qrRef = useRef<any | undefined>();
 
   const [url, setUrl] = useState("");
   const [color, setColor ] = useState("#141926")
-
-  /*const downloadQRCode = (evt: FormEvent) => {
-    evt.preventDefault(); 
-    let canvas = qrRef.current.querySelector("canvas");
-    let image = canvas.toDataURL("image/png");
-    let anchor = document.createElement("a");
-    anchor.href = image;
-    anchor.download = `${url}.png`;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-  
-  }; */
-
+  const [format, setFormat] = useState("svg");
+  const [downloadSize, setDownloadSize] = useState<number>(280);
     
    const downloadQRCode = (evt: FormEvent) => {
     evt.preventDefault(); 
-    
-    const svg = qrRef.current.querySelector("svg");
-    const svgXML = new XMLSerializer().serializeToString(svg);
-    const dataUrl = "data:image/svg," + encodeURIComponent(svgXML);
-  
-    const anchor = document.createElement("a");
-    anchor.href = dataUrl;
-    anchor.download = `${url}.svg`;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-  };
 
+    const svg = qrRef.current.querySelector("svg");
+    const formatExt = format === "svg" ? "svg" : "png"
+
+    const newWidth = downloadSize; 
+    const newHeight = downloadSize;
+    svg.setAttribute("width", newWidth);
+    svg.setAttribute("height", newHeight);
+
+    const svgXML = new XMLSerializer().serializeToString(svg);
+  
+    if (format === "png") {
+      toPng(svg)
+        .then(function (dataUrl) {
+          const anchor = document.createElement("a");
+          anchor.href = dataUrl;
+          anchor.download = `${url}.${formatExt}`;
+          document.body.appendChild(anchor);
+          anchor.click();
+          document.body.removeChild(anchor);
+        })
+        .catch(function (error) {
+          console.error('Erro ao converter SVG em PNG', error);
+        });
+    } else {
+      // Para o formato SVG, você pode adicionar manualmente a extensão .svg
+      const dataUrl = "data:image/svg," + encodeURIComponent(svgXML);
+  
+      const anchor = document.createElement("a");
+      anchor.href = dataUrl;
+      anchor.download = `${url}.${formatExt}`; // Adicione manualmente a extensão .svg
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+    }
+  };
   
 
   const qrCode = (
     <QRCode 
       id="qrCodeId"
-      size={180}
+      size={280}
       renderAs= "svg"
       value={url}
       bgColor="white"
       fgColor={color}
       level="Q"
-    /* imageSettings={{
-        src: QrLogoImg2,
-        excavate: true,
-        width: 120 * 0.2,
-       height: 300 * 0.1,
-      }} */
     />
   )
 
@@ -63,6 +68,7 @@ export default function QrCode() {
 
       <form onSubmit={downloadQRCode} className="qr-container__form">
        
+      
         <input
           type="text"
           value={url}
@@ -76,6 +82,40 @@ export default function QrCode() {
           onChange={(e) => setColor(e.target.value)}
           placeholder="input rgb, hex or color"
         />
+
+        <input
+          type="number"
+          value={downloadSize}
+          onChange={(e) => setDownloadSize(Number(e.target.value))} // Converta para número
+          placeholder="Tamanho do download"
+        />
+
+
+        <div className="radio-container">
+          <div className="radio-button">
+            <input
+              type="radio"
+              id="svgFormat"
+              name="format"
+              value="svg"
+              checked={format === "svg"}
+              onChange={() => setFormat("svg")}
+            />
+            <label htmlFor="svgFormat" className="radio-label">SVG</label>
+          </div>
+          <div className="radio-button">
+            <input
+              type="radio"
+              id="pngFormat"
+              name="format"
+              value="png"
+              checked={format === "png"}
+              onChange={() => setFormat("png")}
+            />
+            <label htmlFor="pngFormat" className="radio-label">PNG</label>
+          </div>
+        </div>
+
 
         <button type="submit">Baixar QR Code</button>
 
