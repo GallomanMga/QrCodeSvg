@@ -43,7 +43,7 @@ export default function QrCode() {
   const qrCode = (
     <QRCode 
       id="qrCodeId"
-      size={320}
+      size={180}
       renderAs= "svg"
       value={url}
       bgColor="white"
